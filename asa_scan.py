@@ -1,13 +1,17 @@
 import pprint
 import time
-from os import system
+import subprocess
 import argparse
 
 
 def ping_probe(hostname):
-    response = system('ping -c {} -w {} {} > /dev/null 2>&1'.format(
-                      count, deadline, hostname))
-    if response == 0:
+    response = subprocess.run(['ping',
+                               f'-c {count}',
+                               f'-w {deadline}',
+                               hostname],
+                              stdout=subprocess.DEVNULL,
+                              stderr=subprocess.STDOUT)
+    if response.returncode == 0:
         result = True
     else:
         result = False
