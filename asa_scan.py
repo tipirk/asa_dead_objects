@@ -51,19 +51,33 @@ def clean_dict(raw_dict):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--file', required=True, help='Set an ASA\
-                        config file to scan')
-    parser.add_argument('-c', '--count', help='Set a number of icmp \
-                        packets to scan a host (default 1)', default=1)
-    parser.add_argument('-w', '--deadline', help='Set a deadline in seconds\
-                        to stop executing ping (default 1)', default=1)
+    parser.add_argument('-f', '--file', required=True, help='Set an ASA '
+                        'config file to scan')
+    parser.add_argument('-c', '--count', help='Set a number of icmp '
+                        'packets to scan a host (default 1)', default=1)
+    parser.add_argument('-w', '--deadline', help='Set a deadline in seconds '
+                        'to stop executing ping (default 1)', default=1)
+    parser.add_argument('-o', '--output', help='Set an output file, if not'
+                        'determined print in terminal', default='screen')
+    parser.add_argument('-t', '--time', action='store_true', default=False,
+                        help='Print script executing time in terminal')
     namespace = parser.parse_args()
     filename = namespace.file
     count = namespace.count
     deadline = namespace.deadline
+    output = namespace.output
+    time_print = namespace.time
 
     t0 = time.time()
+
     raw_network_objects = find_objects(filename)
     network_objects = clean_dict(raw_network_objects)
-    pprint.pprint(network_objects)
-    print(time.time() - t0)
+
+    if output == 'screen':
+        pprint.pprint(network_objects)
+    else:
+        with open(output, 'w') as f:
+            f.write(pprint.pformat(network_objects))
+
+    if time_print:
+        print(time.time() - t0)
